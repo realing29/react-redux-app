@@ -1,28 +1,30 @@
 import React, { useEffect, useState } from "react";
 import ReactDOM from "react-dom/client";
-import { initiateStore } from "./store/store";
-import * as actions from "./store/actions";
+import configureStore from "./store/store";
+import {
+  titleChanged,
+  taskDeleted,
+  completeTask,
+  getTasks,
+} from "./store/task";
 
-const store = initiateStore();
+const store = configureStore();
 
 const App = () => {
   const [state, setState] = useState(store.getState());
 
   useEffect(() => {
+    store.dispatch(getTasks());
     store.subscribe(() => {
       setState(store.getState());
     });
   }, []);
 
-  const completeTask = (taskId) => {
-    store.dispatch(actions.taskCompleted(taskId));
-  };
-
   const changeTitle = (taskId) => {
-    store.dispatch(actions.titleChanged(taskId));
+    store.dispatch(titleChanged(taskId));
   };
   const deleteTask = (taskId) => {
-    store.dispatch(actions.taskDeleted(taskId));
+    store.dispatch(taskDeleted(taskId));
   };
 
   return (
@@ -33,7 +35,9 @@ const App = () => {
           <li key={el.id}>
             <p>{el.title}</p>
             <p>{`Completed: ${el.completed}`}</p>
-            <button onClick={() => completeTask(el.id)}>completed</button>
+            <button onClick={() => store.dispatch(completeTask(el.id))}>
+              completed
+            </button>
             <button onClick={() => changeTitle(el.id)}>Change title</button>
             <button onClick={() => deleteTask(el.id)}>Delete</button>
             <hr />
@@ -45,8 +49,4 @@ const App = () => {
 };
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
-root.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
-);
+root.render(<App />);
