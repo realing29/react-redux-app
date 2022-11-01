@@ -10,10 +10,8 @@ const todosService = {
     return data;
   },
   async create(payload) {
-    const { data } = await httpService.post(todosEndpoint, {
-      data: payload,
-    });
-    return { ...data.data, id: data.id };
+    const { data } = await httpService.post(todosEndpoint, payload);
+    return data;
   },
 };
 
